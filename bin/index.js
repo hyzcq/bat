@@ -1,3 +1,5 @@
+#! /usr/bin/env node
+
 const fs = require('fs');
 const program = require('commander');
 const downloadGit = require('download-git-repo');
@@ -11,31 +13,33 @@ const rimraf = require('rimraf');
 const commandExists = require('command-exists');
 
 const apicloudTempUrl = 'direct:https://github.com/hyzcq/apicloud-template.git#master';
-const h5TempUrl = 'direct:https://github.com/hyzcq/apicloud-template.git#master';
+const h5TempUrl = 'direct:https://github.com/hyzcq/h5-template.git#master';
 
 let path;
 
-program.command('init <name>')
-       .action((name) => {
-            path = name;
-            if(fs.existsSync(path)){
-                console.log();
-                inquirer.prompt([
-                    {
-                        type: 'confirm',
-                        name: 'isCover',
-                        message: '文件目录已存在，是否继续？',
-                        default: false
-                    }
-                ]).then((answer)=> {
-                    if(answer.isCover){
-                        init();
-                    }
-                })
-            }else{
-                init();
-            }
-       })
+program
+    .usage('<command> [options]')
+    .command('init <name>')
+    .action((name) => {
+        path = name;
+        if(fs.existsSync(path)){
+            console.log();
+            inquirer.prompt([
+                {
+                    type: 'confirm',
+                    name: 'isCover',
+                    message: '文件目录已存在，是否继续？',
+                    default: false
+                }
+            ]).then((answer)=> {
+                if(answer.isCover){
+                    init();
+                }
+            })
+        }else{
+            init();
+        }
+    })
 
 // 选择项目类型，初始化项目
 function init() {
@@ -118,5 +122,9 @@ function download(url, path) {
         }
     })
 }
+
+process.on('exit', () => {
+    console.log()
+})
 
 program.parse(process.argv);
